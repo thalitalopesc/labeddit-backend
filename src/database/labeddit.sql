@@ -36,7 +36,7 @@ VALUES ('p001', "Texto para o Labeddit", "u001", "Thalita");
 SELECT * FROM posts;
 DROP TABLE posts;
 
-CREATE TABLE likes_dislikes (
+CREATE TABLE likes_dislikes_posts (
     like INTEGER NOT NULL,
     post_id TEXT NOT NULL,
     user_id TEXT NOT NULL,
@@ -48,15 +48,20 @@ CREATE TABLE likes_dislikes (
         ON DELETE CASCADE
 );
 
-INSERT INTO likes_dislikes
+INSERT INTO likes_dislikes_posts
 VALUES ("u002", "p001", 1);
 
-SELECT * FROM likes_dislikes;
+SELECT * FROM likes_dislikes_posts;
 
-DROP TABLE likes_dislikes;
+DROP TABLE likes_dislikes_posts;
 
 CREATE TABLE comments (
-    comment TEXT NOT NULL,
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    content TEXT NOT NULL,
+    likes INTEGER DEFAULT(0) NOT NULL,
+    dislikes INTEGER DEFAULT(0) NOT NULL,
+    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
+    updated_at TEXT DEFAULT (DATETIME()) NOT NULL,
     user_id TEXT NOT NULL,
     post_id TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)
@@ -67,9 +72,30 @@ CREATE TABLE comments (
         ON DELETE CASCADE
 );
 
-INSERT INTO comments
-VALUES ("Amei o post!", "u002", "p001");
+INSERT INTO comments (id, user_id, post_id, content)
+VALUES ("c001", "u002", "p001", "Amei o post!");
 
 SELECT * FROM comments;
 
 DROP TABLE comments;
+
+CREATE TABLE likes_dislikes_comments (
+    like INTEGER NOT NULL,
+    comment_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    post_id TEXT NOT NULL,
+    FOREIGN KEY (comment_id) REFERENCES comments (id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts (id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+
+)
+
+SELECT * FROM likes_dislikes_comments;
+
+DROP TABLE likes_dislikes_comments;
